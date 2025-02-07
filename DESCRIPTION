@@ -1,0 +1,19 @@
+Package: RaMBat
+Title: Medulloblastoma Subtyping
+Version: 0.0.0.9000
+Authors@R: 
+    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: this package is used to predict the subtype information of medolloblastoima samples
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 3.5)
+LazyData: true
+LazyDataCompression: xz
+Imports: 
+    glmnet,
+    purrr,
+    reshape2
