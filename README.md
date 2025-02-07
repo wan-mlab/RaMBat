@@ -32,7 +32,7 @@ myMat<-preMB(data)
 ```
 
 ## Example
-# 1. Extrat features from GSE85217 then predict the subtype information for give data
+1. Extrat features from GSE85217 then predict the subtype information for give data
 ```bash
 data(GSE85217)
 data(sampAnnot_GSE85217)
@@ -41,13 +41,15 @@ data(sampAnnot_GSE85217)
 3.MB_RANK_GP<-LaSelect(GSE85217, sampAnnot_GSE85217, all_rank_t_genes,all_reversed_gp_genes)
 4. myMat<- predMB(data)
 ```
-# 2. Predict the subtype information for give data directly
+2. Predict the subtype information for give data directly
 ```bash
 data(MB_RANK_GP)
 myMat<-preMB(GSE85217)
 ```
 ## Evaluate the performance of RaMBat
+```bash
 data(MB_RANK_GP)
 data(samp_13)
 data(all_13datasets)
 pred_result<-testMB(all_13datasets, MB_RANK_GP, samp_13)
+```
