@@ -10,7 +10,7 @@ devtools::install_github('wan-mlab/RaMBat')
 library(RaMBat)
 ```
 
-##Train your own data to extract features
+## Train your own data to extract features
 ```bash
 1. use GRA() function to extract differentially ranked genes
 all_rank_t_genes<- RCA(data, sampAnnot)
@@ -23,9 +23,11 @@ MB_RANK_GP<-LaSelect(data, sampAnnot, all_rank_t_genes,all_reversed_gp_genes)
 
 4. use predMB() function to predict the MB subtype information
 myMat<- (data)
+```
 
-
-##Predict the MB subtype information directly
+## Predict the MB subtype information directly
+```bash
 data(MB_RANK_GP)
 myMat<-preMB(data)
+```
 
