@@ -22,7 +22,7 @@ all_reversed_gp_genes<-RRA(data, sampAnnot, all_rank_t_genes)
 MB_RANK_GP<-LaSelect(data, sampAnnot, all_rank_t_genes,all_reversed_gp_genes)
 
 4. use predMB() function to predict the MB subtype information
-myMat<- (data)
+myMat<- predMB(data)
 ```
 
 ## Predict the MB subtype information directly
