@@ -1,4 +1,4 @@
-# RaMBat : A gene-_ranking_ based framework for identifying Medulloblasotma (_MB_) subtypes with severe b_at_ch effects
+# RaMBat : A gene-_ranking_ based framework for identifying Medulloblasotma (_MB_) subtypes with severe _batch_ effects
 
 ## Workflow
 ![Workflow of RaMBat](workflow.png)
