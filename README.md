@@ -1,4 +1,4 @@
-# RaMBat : A gene-_r̲a̲n̲k̲i̲n̲g̲_ based framework for identifying Medulloblasotma (_M̲B̲_) subtypes with severe _ba̲t̲ch_ effects
+# RaMBat : A gene-_r̲a̲n̲k̲i̲n̲g̲_ based framework for identifying Medulloblasotma (__M̲B̲__) subtypes with severe _ba̲t̲ch_ effects
 
 ## Workflow
 ![Workflow of RaMBat](workflow.png)
