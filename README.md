@@ -21,7 +21,7 @@ all_reversed_gp_genes<-RRA(data, sampAnnot, all_rank_t_genes)
 3. use LaSelect() function to select non-zero coefficient GERs (LASSO feature selection)
 MB_RANK_GP<-LaSelect(data, sampAnnot, all_rank_t_genes,all_reversed_gp_genes)
 
-4. use predMB() function to predict the MB subtype information
+4. use predMB() function to predict the MB subtype information (MB subtype identification)
 Predicted_subtype<- predMB(test_data,MB_RANK_GP)
 ```
 
@@ -48,6 +48,7 @@ myMat<-preMB(GSE21140, MB_RANK_GP)
 ```
 ## Evaluate the performance of RaMBat
 ```bash
+Load the necessary data. all_13datasets is the normalized combination of all 13 independent test datasets. samp_13 is the annotation file for all_13datasets
 data(MB_RANK_GP)
 data(samp_13)
 data(all_13datasets)
