@@ -47,7 +47,7 @@ data(MB_RANK_GP)
 myMat<-preMB(GSE21140, MB_RANK_GP)
 ```
 ## Evaluate the performance of RaMBat
-Load the necessary data. all_13datasets is the normalized combination of all 13 independent test datasets. samp_13 is the annotation file for all_13datasets
+Load the necessary data. **all_13datasets** is the normalized combination of all 13 independent test datasets. **samp_13** is the annotation file for all_13datasets
 ```bash
 data(MB_RANK_GP)
 data(samp_13)
