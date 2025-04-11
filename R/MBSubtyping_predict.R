@@ -2,16 +2,17 @@
 #' @importFrom utils install.packages
 #' @title predict medulloblastoma (MB) subtype
 #' @description
-#' this function is used to subtype given samples. Based on gene ratios we selected from previous steps, for each sample, we predict its subtype
+#' this function is used to subtype given samples. Based on gene ratios we selected from previous steps, for each sample from independent test dataset, we predict its subtype
 #'
-#' @param data the given dataset we need to predit subtype information based on extracted features
+#' @param data the independent test dataset we need to predit subtype information based on extracted gene ratios (GERs)
 #'
+#' @param MB_RANK_GP the unique gene ratios (GERs) selected from the training dataset
 #'
-#' @return a global object myMat
+#' @return a global object 'Predicted_subtype'
 #' @export
 #'
-#' @examples myMat<-preMB(data)
-predMB<-function(data){
+#' @examples Predicted_subtype<-predMB(data, MB_RANK_GP)
+predMB<-function(data,MB_RANK_GP){
   medulloGeneSetsUp <- MB_RANK_GP #MB_RANK_GP#GB_RANK_GP_reversalratio#medulloSetsUp#MB_RANK_GP#MB_RANK_GP_reversalratio_alpha0.06
   signatureProbes <-c(medulloGeneSetsUp$WNT,medulloGeneSetsUp$SHH,
                       medulloGeneSetsUp$Group3,medulloGeneSetsUp$Group4)
@@ -80,8 +81,8 @@ predMB<-function(data){
     return( myMatUp)
   }
 
-  myMat <- calcScore(myMat = geneRatioOut, mySetsUp = medulloGeneSetsUp)
+  Predicted_subtype <- calcScore(myMat = geneRatioOut, mySetsUp = medulloGeneSetsUp)
 
 
-  return(myMat)
+  return(Predicted_subtype)
 }

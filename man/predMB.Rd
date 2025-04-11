@@ -4,17 +4,19 @@
 \alias{predMB}
 \title{predict medulloblastoma (MB) subtype}
 \usage{
-predMB(data)
+predMB(data, MB_RANK_GP)
 }
 \arguments{
-\item{data}{the given dataset we need to predit subtype information based on extracted features}
+\item{data}{the independent test dataset we need to predit subtype information based on extracted gene ratios (GERs)}
+
+\item{MB_RANK_GP}{the unique gene ratios (GERs) selected from the training dataset}
 }
 \value{
-a global object myMat
+a global object 'Predicted_subtype'
 }
 \description{
-this function is used to subtype given samples. Based on gene ratios we selected from previous steps, for each sample, we predict its subtype
+this function is used to subtype given samples. Based on gene ratios we selected from previous steps, for each sample from independent test dataset, we predict its subtype
 }
 \examples{
-myMat<-preMB(data)
+Predicted_subtype<-predMB(data, MB_RANK_GP)
 }

@@ -2,21 +2,21 @@
 % Please edit documentation in R/GeneRankAnalysis.R
 \name{GRA}
 \alias{GRA}
-\title{extract differetially ranked genes for each subtype}
+\title{extract differentially ranked genes for each subtype}
 \usage{
 GRA(data, sampAnnot)
 }
 \arguments{
-\item{data}{the original dataset we extract features}
+\item{data}{the training dataset we extract features}
 
-\item{sampAnnot}{sampAnnot is the annotation file for each samples in data}
+\item{sampAnnot}{sampAnnot is the annotation file for each samples in training dataset}
 }
 \value{
-a global object all_rank_t_genes
+a global object 'all_rank_t_genes'
 }
 \description{
-this function is used to extratc differetially ranked genes from dataset for each subtype
+this function is used to extract differentially ranked genes from dataset for each subtype
 }
 \examples{
-all_rank_t_genes<- RCA(GSE85217, sampAnnote_GSE85217)
+all_rank_t_genes<- GRA(GSE85217, sampAnnote_GSE85217)
 }

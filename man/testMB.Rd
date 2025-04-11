@@ -4,17 +4,21 @@
 \alias{testMB}
 \title{predict medulloblastoma (MB) subtype}
 \usage{
-testMB(data)
+testMB(data, MB_RANK_GP, sampAnnot)
 }
 \arguments{
-\item{data}{the example data (all_13datasets) to test the performance of RaMBat}
+\item{data}{the example independent test dataset (all_13datasets) to evaluate the performance of RaMBat}
+
+\item{MB_RANK_GP}{the unique gene ratios (GERs) selected from the training dataset}
+
+\item{sampAnnot}{the sampAnnot is the annotation file for each sample in training dataset}
 }
 \value{
-a global object pred_result
+a global object 'Pred_performance'
 }
 \description{
 this function is used to subtype given samples based on gene ratios we selected from previous steps, for each sample, we predict its subtype
 }
 \examples{
-pred_result<-testMB(all_datasets, MB_RANK_GP, sampAnnote_all)
+Pred_performance<-testMB(all_13datasets, MB_RANK_GP, samp_13)
 }

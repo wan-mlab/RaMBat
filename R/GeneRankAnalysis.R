@@ -1,36 +1,34 @@
 #' @importFrom stats coef cor fisher.test t.test
 #' @importFrom utils install.packages
-#' @title extract differetially ranked genes for each subtype
+#' @title extract differentially ranked genes for each subtype
 #' @description
-#' this function is used to extratc differetially ranked genes from dataset for each subtype
+#' this function is used to extract differentially ranked genes from dataset for each subtype
 #'
-#' @param data the original dataset we extract features
-#' @param sampAnnot sampAnnot is the annotation file for each samples in data
+#' @param data the training dataset we extract features
+#' @param sampAnnot sampAnnot is the annotation file for each samples in training dataset
 #'
-#' @return a global object all_rank_t_genes
+#' @return a global object 'all_rank_t_genes'
 #' @export
 #'
-#' @examples all_rank_t_genes<- RCA(GSE85217, sampAnnote_GSE85217)
+#' @examples all_rank_t_genes<- GRA(GSE85217, sampAnnote_GSE85217)
 GRA <- function(data,sampAnnot){
   if (!requireNamespace("purrr", quietly = TRUE)) {
     install.packages("purrr")
   }
   library('purrr')
-  GSE85217<-data #the data format should be: each row is a sample, each column is a gene
-  sampAnnot_GSE85217<-sampAnnot
 
-  ranked_85217 <- apply(GSE85217, 2, function(x) rank(x, ties.method = "average"))
+  ranked_data <- apply(data, 2, function(x) rank(x, ties.method = "average"))
 
-  SHH<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="SHH",1]
-  WNT<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="WNT",1]
-  Group3<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="Group3",1]
-  Group4<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="Group4",1]
+  SHH<-sampAnnot[sampAnnot$Subtype=="SHH",1]
+  WNT<-sampAnnot[sampAnnot$Subtype=="WNT",1]
+  Group3<-sampAnnot[sampAnnot$Subtype=="Group3",1]
+  Group4<-sampAnnot[sampAnnot$Subtype=="Group4",1]
 
 
-  SHH_df<-ranked_85217[,colnames(ranked_85217) %in% SHH]
-  WNT_df<-ranked_85217[,colnames(ranked_85217) %in% WNT]
-  Group3_df<-ranked_85217[,colnames(ranked_85217) %in% Group3]
-  Group4_df<-ranked_85217[,colnames(ranked_85217) %in% Group4]
+  SHH_df<-ranked_data[,colnames(ranked_data) %in% SHH]
+  WNT_df<-ranked_data[,colnames(ranked_data) %in% WNT]
+  Group3_df<-ranked_data[,colnames(ranked_data) %in% Group3]
+  Group4_df<-ranked_data[,colnames(ranked_data) %in% Group4]
 
 
   ########calculate rank change

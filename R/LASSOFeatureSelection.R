@@ -2,18 +2,18 @@
 #' @importFrom utils install.packages
 #' @title extract gene ratios with non-zero coefficient
 #' @description
-#' this function is used to extract important gene ratios from dataset for each subtype based on genes ratios selected from RRA() function
+#' this function is used to extract meaningful gene ratios (GERs) from dataset for each subtype based on GERs selected from RRA() function
 #'
 #' @param data the original dataset we extract features
-#' @param sampAnnote sampAnnot is the annotation file for each samples in data
-#' @param all_rank_t_genes all_rank_t_genes is the differentially ranked genes selected in previous RCA() function
-#' @param all_reversed_gp_genes all_reversed_gp_genes is the differentially ranked gene ratios selected in previous RRA() function
+#' @param sampAnnot sampAnnot is the annotation file for each sample in training dataset
+#' @param all_rank_t_genes all_rank_t_genes is the differentially ranked genes selected in previous GRA() function
+#' @param all_reversed_gp_genes all_reversed_gp_genes is the differentially ranked GERs selected in previous RRA() function
 #'
-#' @return a global object MB_RANK_GP
+#' @return a global object 'MB_RANK_GP'
 #' @export
 #'
-#' @examples MB_RANK_GP<-LaSelect(GSE85217, sampAnnote_GSE85217, all_rank_t_genes,all_reversed_gp_genes)
-LaSelect<-function(data,sampAnnote, all_rank_t_genes, all_reversed_gp_genes){
+#' @examples MB_RANK_GP<-LaSelect(data, sampAnnote_data, all_rank_t_genes,all_reversed_gp_genes)
+LaSelect<-function(data,sampAnnot, all_rank_t_genes, all_reversed_gp_genes){
   if (!requireNamespace("glmnet", quietly = TRUE)) {
     install.packages("glmnet")
   }
@@ -30,19 +30,17 @@ LaSelect<-function(data,sampAnnote, all_rank_t_genes, all_reversed_gp_genes){
     # Return the result
     return(g1g2_ratio)
   }
-  GSE85217<-data #the data format should be: each row is a sample, each column is a gene
-  sampAnnot_GSE85217<-sampAnnote
 
-  ranked_85217 <- apply(GSE85217, 2, function(x) rank(x, ties.method = "average"))
-  SHH<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="SHH",1]
-  WNT<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="WNT",1]
-  Group3<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="Group3",1]
-  Group4<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="Group4",1]
+  ranked_data <- apply(data, 2, function(x) rank(x, ties.method = "average"))
+  SHH<-sampAnnot[sampAnnot$Subtype=="SHH",1]
+  WNT<-sampAnnot[sampAnnot$Subtype=="WNT",1]
+  Group3<-sampAnnot[sampAnnot$Subtype=="Group3",1]
+  Group4<-sampAnnot[sampAnnot$Subtype=="Group4",1]
 
-  SHH_df<-ranked_85217[,colnames(ranked_85217) %in% SHH]
-  WNT_df<-ranked_85217[,colnames(ranked_85217) %in% WNT]
-  Group3_df<-ranked_85217[,colnames(ranked_85217) %in% Group3]
-  Group4_df<-ranked_85217[,colnames(ranked_85217) %in% Group4]
+  SHH_df<-ranked_data[,colnames(ranked_data) %in% SHH]
+  WNT_df<-ranked_data[,colnames(ranked_data) %in% WNT]
+  Group3_df<-ranked_data[,colnames(ranked_data) %in% Group3]
+  Group4_df<-ranked_data[,colnames(ranked_data) %in% Group4]
 
 
   SHH_rank_t_gene<-all_rank_t_genes$SHH_ranked_gene
@@ -55,19 +53,19 @@ LaSelect<-function(data,sampAnnote, all_rank_t_genes, all_reversed_gp_genes){
   Group3_vs_all_reversed_gp_gene<- all_reversed_gp_genes$Group3_ranked_gene
   Group4_vs_all_reversed_gp_gene<- all_reversed_gp_genes$Group4_ranked_gene
 
-  corGenes <- cor(t(ranked_85217[SHH_rank_t_gene,]))
+  corGenes <- cor(t(ranked_data[SHH_rank_t_gene,]))
   corGenes[lower.tri(corGenes)] <- 1
   corGenes <- data.frame(reshape2::melt(corGenes))
   corGenes <- corGenes[corGenes[,"value"]<.99,] #remove when both the same gene or highly correlated
   print(paste("Cor Matrix Created and processing", nrow(corGenes), "rows", sep=" "))
 
-  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_85217), x = x), MARGIN=1)
+  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_data), x = x), MARGIN=1)
   colnames(geneRatioOut) <- paste(corGenes[,1], corGenes[,2], sep="_")
-  rownames(geneRatioOut) <- colnames(as.matrix(ranked_85217))
+  rownames(geneRatioOut) <- colnames(as.matrix(ranked_data))
 
   SHH_generatioout<-geneRatioOut
   colnames(SHH_generatioout) <- paste(corGenes[,1], corGenes[,2], sep="_")
-  rownames(SHH_generatioout) <- colnames(ranked_85217)
+  rownames(SHH_generatioout) <- colnames(ranked_data)
 
 
   #set.seed(43)
@@ -91,7 +89,7 @@ LaSelect<-function(data,sampAnnote, all_rank_t_genes, all_reversed_gp_genes){
   X <- as.matrix(SHH_VS_WNT[, 1:(length(colnames(SHH_VS_WNT))-1)])  # Predictors (binary matrix)
   Y <- SHH_VS_WNT[, (length(colnames(SHH_VS_WNT)))]               # Response (binary outcome)
   # Fit model using cross-validation with an alpha value closer to ridge regression
-  #set.seed(123)
+
   cvmod_ridge <- cv.glmnet(X, Y, family = "binomial", alpha = 0.1)  # Using alpha = 0.1 as an example
   plot(cvmod_ridge)
   # Extract lambda that gives one standard error away from the minimum (more regularized)
@@ -131,7 +129,7 @@ LaSelect<-function(data,sampAnnote, all_rank_t_genes, all_reversed_gp_genes){
   names(coef_1se_ridge_df)[1] <- "Coefficient"
   # Filter to keep only non-zero coefficients (selected genes)
   SHH_Group3_selected_genes_ridge <- coef_1se_ridge_df[coef_1se_ridge_df$Coefficient != 0, ]
-  #275
+
   # SHH_VS_Group4, column is gene pair, row is sample
   SHH_VS_Group4<-rbind(SHH_generatioout_SHH,SHH_generatioout_Group4)
   X <- as.matrix(SHH_VS_Group4[, 1:(length(colnames(SHH_VS_Group4))-1)])  # Predictors (binary matrix)
@@ -153,26 +151,26 @@ LaSelect<-function(data,sampAnnote, all_rank_t_genes, all_reversed_gp_genes){
   names(coef_1se_ridge_df)[1] <- "Coefficient"
   # Filter to keep only non-zero coefficients (selected genes)
   SHH_Group4_selected_genes_ridge <- coef_1se_ridge_df[coef_1se_ridge_df$Coefficient != 0, ]
-  #292
+
   SHH_mb_rank_gp<- Reduce(intersect, list(SHH_Group3_selected_genes_ridge$gene,SHH_WNT_selected_genes_ridge$gene,SHH_Group4_selected_genes_ridge$gene))
   SHH_mb_rank_gp <- SHH_mb_rank_gp[SHH_mb_rank_gp != "(Intercept)"]
 
-  #211
+
   ##########################################################for wnt_mb_rank_gp
-  corGenes <- cor(t(ranked_85217[WNT_rank_t_gene,]))
+  corGenes <- cor(t(ranked_data[WNT_rank_t_gene,]))
   corGenes[lower.tri(corGenes)] <- 1
   corGenes <- data.frame(reshape2::melt(corGenes))
   corGenes <- corGenes[corGenes[,"value"]<.99,] #remove when both the same gene or highly correlated
   print(paste("Cor Matrix Created and processing", nrow(corGenes), "rows", sep=" "))
 
 
-  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_85217), x = x), MARGIN=1)
+  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_data), x = x), MARGIN=1)
   colnames(geneRatioOut) <- paste(corGenes[,1], corGenes[,2], sep="_")
-  rownames(geneRatioOut) <- colnames(as.matrix(ranked_85217))
+  rownames(geneRatioOut) <- colnames(as.matrix(ranked_data))
 
   WNT_generatioout<-geneRatioOut
   colnames(WNT_generatioout) <- paste(corGenes[,1], corGenes[,2], sep="_")
-  rownames(WNT_generatioout) <- colnames(ranked_85217)
+  rownames(WNT_generatioout) <- colnames(ranked_data)
 
   WNT_gps<-WNT_vs_all_reversed_gp_gene
   WNT_generatioout<-WNT_generatioout[,colnames(WNT_generatioout) %in% WNT_gps]
@@ -262,15 +260,15 @@ LaSelect<-function(data,sampAnnote, all_rank_t_genes, all_reversed_gp_genes){
 
   ##########################################################FOR Group3_mb+rank_gp
 
-  corGenes <- cor(t(ranked_85217[Group3_rank_t_gene,]))
+  corGenes <- cor(t(ranked_data[Group3_rank_t_gene,]))
   corGenes[lower.tri(corGenes)] <- 1
   corGenes <- data.frame(reshape2::melt(corGenes))
   corGenes <- corGenes[corGenes[,"value"]<.99,] #remove when both the same gene or highly correlated
   print(paste("Cor Matrix Created and processing", nrow(corGenes), "rows", sep=" "))
 
-  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_85217), x = x), MARGIN=1)
+  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_data), x = x), MARGIN=1)
   colnames(geneRatioOut) <- paste(corGenes[,1], corGenes[,2], sep="_")
-  rownames(geneRatioOut) <- colnames(as.matrix(ranked_85217))
+  rownames(geneRatioOut) <- colnames(as.matrix(ranked_data))
 
   Group3_geneRatioOut<-geneRatioOut
   Group3_gps<-Group3_vs_all_reversed_gp_gene
@@ -362,20 +360,20 @@ LaSelect<-function(data,sampAnnote, all_rank_t_genes, all_reversed_gp_genes){
   ###################################################for Group4_mb_rank_gp
 
 
-  corGenes <- cor(t(ranked_85217[Group4_rank_t_gene,]))
+  corGenes <- cor(t(ranked_data[Group4_rank_t_gene,]))
   corGenes[lower.tri(corGenes)] <- 1
   corGenes <- data.frame(reshape2::melt(corGenes))
   corGenes <- corGenes[corGenes[,"value"]<.99,] #remove when both the same gene or highly correlated
   print(paste("Cor Matrix Created and processing", nrow(corGenes), "rows", sep=" "))
 
 
-  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_85217), x = x), MARGIN=1)
+  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_data), x = x), MARGIN=1)
   colnames(geneRatioOut) <- paste(corGenes[,1], corGenes[,2], sep="_")
-  rownames(geneRatioOut) <- colnames(as.matrix(ranked_85217))
+  rownames(geneRatioOut) <- colnames(as.matrix(ranked_data))
 
   Group4_generatioout<-geneRatioOut
   colnames(Group4_generatioout) <- paste(corGenes[,1], corGenes[,2], sep="_")
-  rownames(Group4_generatioout) <- colnames(ranked_85217)
+  rownames(Group4_generatioout) <- colnames(ranked_data)
 
   Group4_gps<-Group4_vs_all_reversed_gp_gene
   Group4_generatioout<-Group4_generatioout[,colnames(Group4_generatioout) %in% Group4_gps]

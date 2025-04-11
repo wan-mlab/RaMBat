@@ -2,17 +2,17 @@
 #' @importFrom utils install.packages
 #' @title extract reversed gene ratio
 #' @description
-#' this function is used to extract reversed gene ratios from dataset for each subtype based on genes selected from RCA() function
+#' this function is used to extract reversed gene ratios (GERs) from dataset for each subtype based on genes selected from GRA() function
 #'
-#' @param data the original dataset we extract features
-#' @param sampAnnote sampAnnot is the annotation file for each samples in data
-#' @param all_rank_t_genes all_rank_t_genes is the differentially ranked genes selected in previous RCA() function
+#' @param data the training dataset we extract gene ratios (GERs)
+#' @param sampAnnot sampAnnot is the annotation file for each samples in training dataset
+#' @param all_rank_t_genes all_rank_t_genes is the differentially ranked genes selected in previous GRA() function
 #'
-#' @return  a global object all_reversed_gp_genes
+#' @return  a global object 'all_reversed_gp_genes'
 #' @export
 #'
 #' @examples all_reversed_gp_genes<-RRA(GSE85217, sampAnnote_GSE85217, all_rank_t_genes)
-RRA<-function(data,sampAnnote, all_rank_t_genes){
+RRA<-function(data, sampAnnot, all_rank_t_genes){
 
   createRatio <- function(exprs, x) {
     # Extract the indices or names for g1 and g2
@@ -26,14 +26,12 @@ RRA<-function(data,sampAnnote, all_rank_t_genes){
     return(g1g2_ratio)
   }
 
-  GSE85217<-data #the data format should be: each row is a sample, each column is a gene
-  sampAnnot_GSE85217<-sampAnnote
 
-  ranked_85217 <- apply(GSE85217, 2, function(x) rank(x, ties.method = "average"))
-  SHH<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="SHH",1]
-  WNT<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="WNT",1]
-  Group3<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="Group3",1]
-  Group4<-sampAnnot_GSE85217[sampAnnot_GSE85217$Subtype=="Group4",1]
+  ranked_data <- apply(data, 2, function(x) rank(x, ties.method = "average"))
+  SHH<-sampAnnot[sampAnnot$Subtype=="SHH",1]
+  WNT<-sampAnnot[sampAnnot$Subtype=="WNT",1]
+  Group3<-sampAnnot[sampAnnot$Subtype=="Group3",1]
+  Group4<-sampAnnot[sampAnnot$Subtype=="Group4",1]
 
 
   SHH_rank_t_gene<-all_rank_t_genes$SHH_ranked_gene
@@ -42,16 +40,16 @@ RRA<-function(data,sampAnnote, all_rank_t_genes){
   Group4_rank_t_gene<-all_rank_t_genes$Group4_ranked_gene
 
   ###for SHH
-  corGenes <- cor(t(ranked_85217[SHH_rank_t_gene,]))
+  corGenes <- cor(t(ranked_data[SHH_rank_t_gene,]))
   corGenes[lower.tri(corGenes)] <- 1
   corGenes <- data.frame(reshape2::melt(corGenes))
   corGenes <- corGenes[corGenes[,"value"]<.99,] #remove when both the same gene or highly correlated
   print(paste("Cor Matrix Created and processing", nrow(corGenes), "rows", sep=" "))
 
 
-  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_85217), x = x), MARGIN=1)
+  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_data), x = x), MARGIN=1)
   colnames(geneRatioOut) <- paste(corGenes[,1], corGenes[,2], sep="_")
-  rownames(geneRatioOut) <- colnames(ranked_85217)
+  rownames(geneRatioOut) <- colnames(ranked_data)
   SHH_reversed_gp<- geneRatioOut
 
   #for SHH reversed analysis
@@ -82,7 +80,7 @@ RRA<-function(data,sampAnnote, all_rank_t_genes){
   names(Group4_cd)[1]<-"c"
   Group4_cd$d<-length(colnames(Group4_df)) - Group4_cd$c
 
-  ##########calculate reversal ratio and fisher exact test
+  ##########calculate reversal ratio and perform fisher exact test
   ###################for SHH_WNT
   SHH_WNT<-cbind(SHH_ab,WNT_cd)
   rownames(SHH_WNT)<-rownames(SHH_reversed_gp)
@@ -151,16 +149,16 @@ RRA<-function(data,sampAnnote, all_rank_t_genes){
 
 
   ################################################################step2 for WNT
-  corGenes <- cor(t(ranked_85217[WNT_rank_t_gene,]))
+  corGenes <- cor(t(ranked_data[WNT_rank_t_gene,]))
   corGenes[lower.tri(corGenes)] <- 1
   corGenes <- data.frame(reshape2::melt(corGenes))
   corGenes <- corGenes[corGenes[,"value"]<.99,] #remove when both the same gene or highly correlated
   print(paste("Cor Matrix Created and processing", nrow(corGenes), "rows", sep=" "))
 
 
-  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_85217), x = x), MARGIN=1)
+  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_data), x = x), MARGIN=1)
   colnames(geneRatioOut) <- paste(corGenes[,1], corGenes[,2], sep="_")
-  rownames(geneRatioOut) <- colnames(as.matrix(ranked_85217))
+  rownames(geneRatioOut) <- colnames(as.matrix(ranked_data))
   WNT_reversed_gp<- t(geneRatioOut)
 
   ###
@@ -253,7 +251,7 @@ RRA<-function(data,sampAnnote, all_rank_t_genes){
 
 
   ###################################################step 2 for Group3
-  corGenes <- cor(t(ranked_85217[Group3_rank_t_gene,]))
+  corGenes <- cor(t(ranked_data[Group3_rank_t_gene,]))
   corGenes[lower.tri(corGenes)] <- 1
   corGenes <- data.frame(reshape2::melt(corGenes))
   corGenes <- corGenes[corGenes[,"value"]<.99,] #remove when both the same gene or highly correlated
@@ -261,9 +259,9 @@ RRA<-function(data,sampAnnote, all_rank_t_genes){
 
 
 
-  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_85217), x = x), MARGIN=1)
+  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_data), x = x), MARGIN=1)
   colnames(geneRatioOut) <- paste(corGenes[,1], corGenes[,2], sep="_")
-  rownames(geneRatioOut) <- colnames(as.matrix(ranked_85217))
+  rownames(geneRatioOut) <- colnames(as.matrix(ranked_data))
   Group3_reversed_gp<- t(geneRatioOut)
 
   ###
@@ -358,15 +356,15 @@ RRA<-function(data,sampAnnote, all_rank_t_genes){
 
 
   ###########################################step2 for Group4
-  corGenes <- cor(t(ranked_85217[Group4_rank_t_gene,]))
+  corGenes <- cor(t(ranked_data[Group4_rank_t_gene,]))
   corGenes[lower.tri(corGenes)] <- 1
   corGenes <- data.frame(reshape2::melt(corGenes))
   corGenes <- corGenes[corGenes[,"value"]<.99,] #remove when both the same gene or highly correlated
   print(paste("Cor Matrix Created and processing", nrow(corGenes), "rows", sep=" "))
 
-  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_85217), x = x), MARGIN=1)
+  geneRatioOut <- apply(corGenes,  function(x) createRatio(exprs = as.matrix(ranked_data), x = x), MARGIN=1)
   colnames(geneRatioOut) <- paste(corGenes[,1], corGenes[,2], sep="_")
-  rownames(geneRatioOut) <- colnames(as.matrix(ranked_85217))
+  rownames(geneRatioOut) <- colnames(as.matrix(ranked_data))
   Group4_reversed_gp<- t(geneRatioOut)
 
   ###

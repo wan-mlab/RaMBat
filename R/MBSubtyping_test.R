@@ -4,14 +4,16 @@
 #' @description
 #' this function is used to subtype given samples based on gene ratios we selected from previous steps, for each sample, we predict its subtype
 #'
-#' @param data the example data (all_13datasets) to test the performance of RaMBat
+#' @param data the example independent test dataset (all_13datasets) to evaluate the performance of RaMBat
+#' @param MB_RANK_GP the unique gene ratios (GERs) selected from the training dataset
+#' @param sampAnnot the sampAnnot is the annotation file for each sample in training dataset
 #'
-#' @return a global object pred_result
+#' @return a global object 'Pred_performance'
 #' @export
 #'
-#' @examples pred_result<-testMB(all_datasets, MB_RANK_GP, sampAnnote_all)
-testMB<-function(data){
-  medulloGeneSetsUp <- MB_RANK_GP #MB_RANK_GP#GB_RANK_GP_reversalratio#medulloSetsUp#MB_RANK_GP#MB_RANK_GP_reversalratio_alpha0.06
+#' @examples Pred_performance<-testMB(all_13datasets, MB_RANK_GP, samp_13)
+testMB<-function(data,MB_RANK_GP,sampAnnot){
+  medulloGeneSetsUp <- MB_RANK_GP
   signatureProbes <-c(medulloGeneSetsUp$WNT,medulloGeneSetsUp$SHH,
                       medulloGeneSetsUp$Group3,medulloGeneSetsUp$Group4)
 
@@ -80,22 +82,22 @@ testMB<-function(data){
   }
 
   myMat <- calcScore(myMat = geneRatioOut, mySetsUp = medulloGeneSetsUp)
-  match<-match(samp_14$gsm,rownames(myMat))
-  myMat$GroundTruth<-samp_14$Subtype[match]
+  match<-match(samp_13$gsm,rownames(myMat))
+  myMat$GroundTruth<-samp_13$Subtype[match]
   pred <- data.frame(cbind(myMat$Pred_Subtype,rownames(myMat)))
   names(pred)<-c("best.fit", "sample")
   rownames(pred)<-pred$sample
   sample.order <- rownames(pred)
 
-  pred <- pred[sample.order,] # keeping the correct order
+  #pred <- pred[sample.order,]
 
 
-  samp_14<-sampAnnote
-  pred<-pred[samp_14$gsm,]
+  samp_13<-sampAnnot
+  pred<-pred[samp_13$gsm,]# keeping the correct order
   best.fit<-pred[,1]
   #actual<-label_5_LBL202#label_2_validation
 
-  pred<-cbind(samp_14, best.fit)
+  pred<-cbind(samp_13, best.fit)
 
   data<-pred
   # Filter out rows where 'actual' is 'U'
@@ -114,10 +116,10 @@ testMB<-function(data){
   accuracy_per_study <- data.frame(Study = unique_studies, Accuracy = accuracies)
   overal=100*mean(filtered_data$Subtype == filtered_data$best.fit)
   accuracy_per_study[(nrow(accuracy_per_study)+1),]<-c('Overal', overal)
-  pred_result <- list(
+  Pred_performance <- list(
     pred_score = myMat,
     pred_accuracy = accuracy_per_study
   )
 
-  return(pred_result)
+  return(Pred_performance)
 }

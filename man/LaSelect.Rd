@@ -4,23 +4,23 @@
 \alias{LaSelect}
 \title{extract gene ratios with non-zero coefficient}
 \usage{
-LaSelect(data, sampAnnote, all_rank_t_genes, all_reversed_gp_genes)
+LaSelect(data, sampAnnot, all_rank_t_genes, all_reversed_gp_genes)
 }
 \arguments{
 \item{data}{the original dataset we extract features}
 
-\item{sampAnnote}{sampAnnot is the annotation file for each samples in data}
+\item{sampAnnot}{sampAnnot is the annotation file for each sample in training dataset}
 
-\item{all_rank_t_genes}{all_rank_t_genes is the differentially ranked genes selected in previous RCA() function}
+\item{all_rank_t_genes}{all_rank_t_genes is the differentially ranked genes selected in previous GRA() function}
 
-\item{all_reversed_gp_genes}{all_reversed_gp_genes is the differentially ranked gene ratios selected in previous RRA() function}
+\item{all_reversed_gp_genes}{all_reversed_gp_genes is the differentially ranked GERs selected in previous RRA() function}
 }
 \value{
-a global object MB_RANK_GP
+a global object 'MB_RANK_GP'
 }
 \description{
-this function is used to extract important gene ratios from dataset for each subtype based on genes ratios selected from RRA() function
+this function is used to extract meaningful gene ratios (GERs) from dataset for each subtype based on GERs selected from RRA() function
 }
 \examples{
-MB_RANK_GP<-LaSelect(GSE85217, sampAnnote_GSE85217, all_rank_t_genes,all_reversed_gp_genes)
+MB_RANK_GP<-LaSelect(data, sampAnnote_data, all_rank_t_genes,all_reversed_gp_genes)
 }

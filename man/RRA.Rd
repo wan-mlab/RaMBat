@@ -4,20 +4,20 @@
 \alias{RRA}
 \title{extract reversed gene ratio}
 \usage{
-RRA(data, sampAnnote, all_rank_t_genes)
+RRA(data, sampAnnot, all_rank_t_genes)
 }
 \arguments{
-\item{data}{the original dataset we extract features}
+\item{data}{the training dataset we extract gene ratios (GERs)}
 
-\item{sampAnnote}{sampAnnot is the annotation file for each samples in data}
+\item{sampAnnot}{sampAnnot is the annotation file for each samples in training dataset}
 
-\item{all_rank_t_genes}{all_rank_t_genes is the differentially ranked genes selected in previous RCA() function}
+\item{all_rank_t_genes}{all_rank_t_genes is the differentially ranked genes selected in previous GRA() function}
 }
 \value{
-a global object all_reversed_gp_genes
+a global object 'all_reversed_gp_genes'
 }
 \description{
-this function is used to extract reversed gene ratios from dataset for each subtype based on genes selected from RCA() function
+this function is used to extract reversed gene ratios (GERs) from dataset for each subtype based on genes selected from GRA() function
 }
 \examples{
 all_reversed_gp_genes<-RRA(GSE85217, sampAnnote_GSE85217, all_rank_t_genes)
