@@ -38,7 +38,7 @@ data(GSE85217)
 data(sampAnnot_GSE85217)
 1. all_rank_t_genes<- GRA(GSE85217, sampAnnot_GSE85217)
 2. all_reversed_gp_genes<-RRA(GSE85217, sampAnnot_GSE85217, all_rank_t_genes)
-3.MB_RANK_GP<-LaSelect(GSE85217, sampAnnot_GSE85217, all_rank_t_genes,all_reversed_gp_genes)
+3. MB_RANK_GP<-LaSelect(GSE85217, sampAnnot_GSE85217, all_rank_t_genes,all_reversed_gp_genes)
 4. myMat<- predMB(GSE21140,MB_RANK_GP)
 ```
 2. Predict the subtype information for given dataset based on features selected from training dataset (GSE85217)
