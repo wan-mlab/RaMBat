@@ -1,5 +1,8 @@
 # RaMBat : A gene-<ins>Ra</ins>nking based framework for identifying Medulloblasotma (<ins>MB</ins>) subtypes with severe b<ins>at</ins>ch effects
 
+# Publication
+Accurate identification of medulloblastoma subtypes from diverse data sources with severe batch effects by RaMBat. Mengtao Sun, Jieqiong Wang and Shibiao Wang.  BioRxiv 2025.02.24.640010; DOI: https://doi.org/10.1101/2025.02.24.640010
+
 ## Workflow
 ![Workflow of RaMBat](workflow.png)
 
