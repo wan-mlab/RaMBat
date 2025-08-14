@@ -35,19 +35,17 @@ Predicted_subtype<-preMB(test_data,MB_RANK_GP)
 ```
 
 ## Example
-1. Extrat features from training dataset (GSE85217) then predict the subtype information for test dataset (GSE21140)
+1. Extrat features from your own training dataset (training_dataset), then predict the subtype information for the new test MB samples (new_MB_samples). in this part, a samp_Annot file need to be prepared by the user (check the format of 'sampAnnot_GSE85217' in data folder).
 ```bash
-data(GSE85217)
-data(sampAnnot_GSE85217)
-1. all_rank_t_genes<- GRA(GSE85217, sampAnnot_GSE85217)
-2. all_reversed_gp_genes<-RRA(GSE85217, sampAnnot_GSE85217, all_rank_t_genes)
-3. MB_RANK_GP<-LaSelect(GSE85217, sampAnnot_GSE85217, all_rank_t_genes,all_reversed_gp_genes)
-4. myMat<- predMB(GSE21140,MB_RANK_GP)
+1. all_rank_t_genes<- GRA(training_dataset, samp_Annot)
+2. all_reversed_gp_genes<-RRA(training_dataset, samp_Annot, all_rank_t_genes)
+3. MB_RANK_GP<-LaSelect(training_dataset, samp_Annot, all_rank_t_genes,all_reversed_gp_genes)
+4. myMat<- predMB(new_MB_samples,MB_RANK_GP)
 ```
-2. Predict the subtype information for given dataset based on features selected from training dataset (GSE85217)
+2. Predict the subtype information for given new test MB sample (new_MB_samples) based on features selected by RaMBat from  dataset GSE85217.
 ```bash
 data(MB_RANK_GP)
-myMat<-preMB(GSE21140, MB_RANK_GP)
+myMat<-preMB(new_MB_samples, MB_RANK_GP)
 ```
 ## Evaluate the performance of RaMBat
 Load the necessary data. **all_13datasets** is the normalized combination of all 13 independent test datasets. **samp_13** is the annotation file for all_13datasets
