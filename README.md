@@ -31,7 +31,7 @@ Predicted_subtype<- predMB(test_data,MB_RANK_GP)
 ## Predict the MB subtype information directly
 ```bash
 data(MB_RANK_GP)
-Predicted_subtype<-preMB(test_data,MB_RANK_GP)
+Predicted_subtype<-predMB(test_data,MB_RANK_GP)
 ```
 
 ## Example
