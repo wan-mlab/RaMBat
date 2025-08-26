@@ -45,7 +45,7 @@ Predicted_subtype<-predMB(test_data,MB_RANK_GP)
 2. Predict the subtype information for given new test MB sample (new_MB_samples) based on features selected by RaMBat from  dataset GSE85217.
 ```bash
 data(MB_RANK_GP)
-myMat<-preMB(new_MB_samples, MB_RANK_GP)
+myMat<-predMB(new_MB_samples, MB_RANK_GP)
 ```
 ## Evaluate the performance of RaMBat
 Load the necessary data. **all_13datasets** is the normalized combination of all 13 independent test datasets. **samp_13** is the annotation file for all_13datasets
